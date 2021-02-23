@@ -24,7 +24,7 @@ const particlesOptions = {
 const initialState = {
 	input: '',
 	imageUrl: '',
-	box: '',
+	boxes: [],
 	route: 'signin',
 	isSignedIn: false,
 	user: {
@@ -54,22 +54,26 @@ class App extends Component {
 		})
 	}
 
-	calculateFaceLocation = (data) => {
-		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
-		const image = document.getElementById('imagewidth')
-		const width = Number(image.width)
-		const height = Number(image.height)
-		// console.log(width, height)
-		return {
-			leftCol: clarifaiFace.left_col * width,
-			topRow: clarifaiFace.top_row * height,
-			rightCol: width - (clarifaiFace.right_col * width),
-			bottowRow: height - (clarifaiFace.bottom_row * height )
-		}
+	calculateFaceLocations = (data) => {
+		// const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
+		const clarifaiFaces = data.outputs[0].data.regions.map(face => {
+			let clarifaiFace = face.region_info.bounding_box
+			const image = document.getElementById('imagewidth')
+			const width = Number(image.width)
+			const height = Number(image.height)
+
+			return {
+				leftCol: clarifaiFace.left_col * width,
+				topRow: clarifaiFace.top_row * height,
+				rightCol: width - (clarifaiFace.right_col * width),
+				bottowRow: height - (clarifaiFace.bottom_row * height)
+			}
+		})
+		return clarifaiFaces
 	}
 
-	faceBox = (box) => {
-		this.setState({box: box})
+	faceBoxes = (boxes) => {
+		this.setState({boxes: boxes})
 	}
 
 	onInputChange = (event) => {
@@ -102,7 +106,7 @@ class App extends Component {
 							this.setState(Object.assign(this.state.user, {entries: count}))
 						}).catch(err => console.log(err))
 				}
-				this.faceBox(this.calculateFaceLocation(response))
+				this.faceBoxes(this.calculateFaceLocations(response))
 			})
 			.catch(err => console.log(err))
 		// this.setState({imageUrl: ''})
@@ -124,19 +128,20 @@ class App extends Component {
 	// }
 
 	render() {
+		const {isSignedIn, imageUrl, boxes, route} = this.state
 		return (
 			<div className="App">
 				<Particles className='particles' params={ particlesOptions }/>
-				<Navigation onRouteChange={this.onRouteChange} isSignedIn={this.state.isSignedIn}/>
-				{this.state.route === 'home'
+				<Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn}/>
+				{route === 'home'
 					? <div> 		
 							<Logo />
 							<Rank name={this.state.user.name} entries={this.state.user.entries} />
 							<ImageForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-							<FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box} />
+							<FaceRecognition imageUrl={imageUrl} boxes={boxes} />
 						</div>
 					: (
-						this.state.route === 'signin' 
+						route === 'signin' 
 							? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
 							: <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
 					)
