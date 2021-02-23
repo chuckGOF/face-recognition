@@ -85,7 +85,7 @@ class App extends Component {
 		// d02b4508df58432fbb84e800597b8959
 		// console.log(this.state.user)
 		this.setState({ imageUrl: this.state.input })
-		fetch('http://localhost:3000/imageurl', {
+		fetch('https://frozen-escarpment-39125.herokuapp.com/imageurl', {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -94,7 +94,7 @@ class App extends Component {
 			}).then(response => response.json())
 			.then((response) => {
 				if (response) {
-					fetch('http://localhost:3000/image', {
+					fetch('https://frozen-escarpment-39125.herokuapp.com/image', {
 						method: 'put',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify({
@@ -120,12 +120,6 @@ class App extends Component {
 		}
 		this.setState({route: route})
 	}
-
-	// componentDidMount = () => {
-	// 	fetch('http://localhost:3000/')
-	// 		.then(resp => resp.json())
-	// 		.then(data => console.log(data))
-	// }
 
 	render() {
 		const {isSignedIn, imageUrl, boxes, route} = this.state
