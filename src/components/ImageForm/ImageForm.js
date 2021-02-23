@@ -5,7 +5,7 @@ const ImageForm = ({onInputChange, onButtonSubmit}) => {
     return (
         <div>
             <p className='f3'>
-                {'This brain app will detect faces in your picture. Give it a try.'}
+                {'This face detection app will detect faces in your picture. Give it a try!!!.'}
             </p>
 
             <div className='center'>
