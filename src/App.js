@@ -109,7 +109,7 @@ class App extends Component {
 				this.faceBoxes(this.calculateFaceLocations(response))
 			})
 			.catch(err => console.log(err))
-		this.setState({input: ''})
+		// this.setState({input: ''})
 	}
 
 	onRouteChange = (route) => {
